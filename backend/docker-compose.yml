@@ -1,0 +1,25 @@
+services:
+  db:
+    image: postgres:16
+    container_name: cronvault-db
+    environment:
+      - POSTGRES_USER=cronvault
+      - POSTGRES_PASSWORD=cronvault
+      - POSTGRES_DB=cronvault
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: always
+
+  cronvault:
+    build: .
+    container_name: cronvault
+    environment:
+      - DATABASE_URL=postgresql://cronvault:***@db:5432/cronvault
+    restart: always
+    depends_on:
+      - db
+
+volumes:
+  pgdata:

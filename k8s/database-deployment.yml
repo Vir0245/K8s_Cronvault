@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cronvault-database
+  namespace: cronvault
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cronvault-database
+  template:
+    metadata:
+      labels:
+        app: cronvault-database
+      name: cronvault-database
+    spec:
+      containers:
+        - name: cronvault-database
+          image: postgres:16
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: database-secret
+                  key: DATABASE_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: database-secret
+                  key: DATABASE_PASSWORD
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  name: database-secret
+                  key: DATABASE_NAME
+          volumeMounts:
+            - name: cronvault-database-volume
+              mountPath: /var/lib/postgresql/data
+              subPath: pgdata
+      volumes:
+        - name: cronvault-database-volume
+          persistentVolumeClaim:
+            claimName: cronvault-database-pvc

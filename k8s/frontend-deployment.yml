@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cronvault-frontend
+  namespace: cronvault
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cronvault-frontend
+  template:
+    metadata:
+      labels:
+        app: cronvault-frontend
+    spec:
+      containers:
+        - name: cronvault-frontend
+          image: vir0245/cronvault-frontend:v2
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 150m
+              memory: 128Mi
+          volumeMounts:
+            - name: nginx-config
+              mountPath: /etc/nginx/conf.d/default.conf
+              subPath: default.conf
+      volumes:
+        - name: nginx-config
+          configMap:
+            name: cronvault-frontend-nginx

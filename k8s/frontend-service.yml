@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: cronvault-frontend
+  namespace: cronvault
+spec:
+  selector:
+    app: cronvault-frontend
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80

@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cronvault-backend
+  namespace: cronvault
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cronvault-backend
+  template:
+    metadata:
+      labels:
+        app: cronvault-backend
+    spec:
+      containers:
+        - name: cronvault-backend
+          image: vir0245/cronvault-backend:v2
+          ports:
+            - containerPort: 8010
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 250m
+              memory: 256Mi
+          env:
+            - name: DATABASE_URL
+              value: postgresql://admin:postgres@postgres:5432/admin
+          volumeMounts:
+            - name: cronvault-backend-volume
+              mountPath: /app/data
+      volumes:
+        - name: cronvault-backend-volume
+          emptyDir: {}
